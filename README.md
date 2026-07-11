@@ -7,7 +7,7 @@ What’s Inside PixelDot2D Core Framework
   - [Core Key Technical Features](#core-key-technical-features)
 - [Combat Sub-Library](#Combat-Sub-Library-The-Universal-2D-Execution-Engine)
   - [Combat Key Technical Features](#combat-key-Technical-features)
-- [Modular Character Sub-Library](#modular-character-Sub-Library-The-Universal-2D-Execution-Engine)
+- [Modular Character Sub-Library](#modular-character-Sub-Library-Full-Runtime-Reconfigurability)
   - [Combat Key Technical Features](#modular-character-key-Technical-features)
 
 ---
