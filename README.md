@@ -1,2 +1,2 @@
-# Feature-List
-A Feature List For PixelDot2D Core Framework
+# PixelDot2D Core Framework Feature List
+What’s Inside PixelDot2D Core Framework
