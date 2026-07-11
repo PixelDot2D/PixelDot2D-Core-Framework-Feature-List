@@ -7,6 +7,8 @@ What’s Inside PixelDot2D Core Framework
   - [Core Key Technical Features](#core-key-technical-features)
 - [Combat Sub-Library](#Combat-Sub-Library-The-Universal-2D-Execution-Engine)
   - [Combat Key Technical Features](#combat-key-Technical-features)
+- [Modular Character Sub-Library](#modular-character-Sub-Library-The-Universal-2D-Execution-Engine)
+  - [Combat Key Technical Features](#modular-character-key-Technical-features)
 
 ---
 
@@ -44,5 +46,21 @@ Weapon systems are frequently a bloated labyrinth of deeply nested GameObjects, 
 
 ---
 
+## Modular Character Sub-Library (Full Runtime Reconfigurability)
+
+Engineered explicitly for entities requiring real-time architectural evolution, dynamic status mutation, and total runtime restructuring. The framework enforces atomic control over individual isolated behaviors—enabling developers to seamlessly inject, hot-swap, or strip character logic on the fly across any genre utilizing a standard 2D physics plane, including side-scrollers, 2.5D hybrids, top-down shooters, space simulators, and more.
+
+To ensure absolute stability during complex, multi-state reconfigurations, all state transitions and behavior mutations are deferred through an isolated Queue System that completely neutralizes multi-threaded race conditions and volatile null-reference exceptions. This decoupled architecture enables absolute, zero-code-change extensibility: entirely new operational states can be introduced and integrated into existing character behaviors without altering a single line of pre-existing code inside the master orchestrator. By leveraging the data-driven input pipeline and automated flyweight factory, developers can map complex transitions into newly authored states directly from the Unity Inspector using pre-built blueprint templates engineered for any movement profile a native `Rigidbody2D` can execute.
+
+### Modular Character Key Technical Features:
+
+- **Plain C# Architecture:** Evaluates via centralized manual update pumps completely outside of traditional `MonoBehaviour` hierarchy overhead to guarantee absolute zero runtime garbage collection spikes.
+- **Frictionless Extensibility:** Inject entirely new structural logic seamlessly using built-in Flyweight and Factory design patterns without ever touching or modifying the core controller codebase.
+- **Scripted Composition States:** Mix, match, and orchestrate complex entity state lifecycles directly inside the editor utilizing interchangeable, data-driven `ScriptableObject` configurations.
+- **Intelligent Removal & Fallback:** Safely strip operational states or individual behaviors at runtime with automated fallback safeguards that smoothly revert the entity back to a default Master Blueprint state.
+- **Interface-Driven Pipeline:** Requirements are restricted to a single, thin interface (`IModularCharacter`), completely eliminating the restrictive constraints and engineering clutter of forced class inheritance.
+- **Virtual Lazy State Pooling:** Advanced internal memory management that dynamically tracks usage metrics, keeping only actively required states allocated while recycling dormant instances to optimize CPU cache locality.
+- **Modular "Lego-Style" Passives:** Deconstruct passive mechanics into interchangeable `ScriptableObject` functional cogs, allowing you to assemble intricate gameplay synergies with zero manual script modifications.
+- **Infinite Entity Reusability:** Deploy one unified, universal controller profile to drive player characters, hostile enemies, AI companions, or any arbitrary 2D entity in your project layout.
 
 
