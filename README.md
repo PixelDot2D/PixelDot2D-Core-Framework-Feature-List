@@ -4,9 +4,9 @@ What’s Inside PixelDot2D Core Framework
 ## Table Of Contents
 
 - [Core Engine Layer](#core-engine-layer-the-autonomous-foundation)
-  - [Key Technical Features](#core-key-technical-features)
+  - [Core Key Technical Features](#core-key-technical-features)
 - [Combat Sub-Library](#Combat-Sub-Library-The-Universal-2D-Execution-Engine)
-  - [Key Technical Features](#combat-key-Technical-features)
+  - [Combat Key Technical Features](#combat-key-Technical-features)
 
 ---
 
