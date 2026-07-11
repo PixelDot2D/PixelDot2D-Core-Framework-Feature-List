@@ -9,6 +9,8 @@ What’s Inside PixelDot2D Core Framework
   - [Combat Key Technical Features](#combat-key-Technical-features)
 - [Modular Character Sub-Library](#modular-character-Sub-Library-Full-Runtime-Reconfigurability)
   - [Combat Key Technical Features](#modular-character-key-Technical-features)
+- [Platformer Sub-Library](#Platformer-Sub-Library)
+  - [Platformer Key Technical Features](#Platformer-key-Technical-features)
 
 ---
 
@@ -62,5 +64,22 @@ To ensure absolute stability during complex, multi-state reconfigurations, all s
 - **Virtual Lazy State Pooling:** Advanced internal memory management that dynamically tracks usage metrics, keeping only actively required states allocated while recycling dormant instances to optimize CPU cache locality.
 - **Modular "Lego-Style" Passives:** Deconstruct passive mechanics into interchangeable `ScriptableObject` functional cogs, allowing you to assemble intricate gameplay synergies with zero manual script modifications.
 - **Infinite Entity Reusability:** Deploy one unified, universal controller profile to drive player characters, hostile enemies, AI companions, or any arbitrary 2D entity in your project layout.
+
+---
+
+## Platformer Sub-Library
+
+The Platformer sub-library delivers a highly optimized, streamlined movement controller engineered to demonstrate the seamless, practical integration of the core framework's primary infrastructure—including Asynchronous Serialization, Cross-Device Input wrappers, and the Interaction suite. This module acts as an approachable, lightweight entry point into the broader ecosystem architecture, providing a production-ready baseline that strictly enforces the framework’s high-performance architectural rules without the steep learning curve of fully virtualized or abstract systems.
+
+To preserve strict codebase purity, systems involving highly subjective or design-dependent trade-offs—such as moving platform algorithms or combat mechanics—have been intentionally omitted. This delivers an pristine, unbloated "white-box" architecture, providing developers with a rock-solid, predictable foundation that is instantly ready for custom mechanical extensions.
+
+### Platformer Key Technical Features:
+
+- **Deterministic States:** Out-of-the-box support for precise, frame-perfect genre mechanics, including Grounded, Airborne (with integrated Coyote Time and multi-jump support), Gliding, Wall Climbs, Ledge Grabs, and One-Way Platform pass-throughs.
+- **Frictionless Onboarding Architecture:** Designed with a lean, visible implementation footprint that avoids dense abstraction layers, making it highly readable and exceptionally easy to debug or modify.
+- **Native Engine Harmony:** Striking an ideal balance for rapid prototyping, this sub-library interfaces directly with standard Unity physics components while still benefiting from the framework's decoupled data structures.
+- **Plug-and-Play Systems Validation:** Serves as a live, functional blueprint displaying exactly how to map runtime data to the save/load pipeline and pass mechanical inputs through the central wrapper.
+- **Zero-Allocation Environment Sampling:** Utilizes the Core Physics Module's native casting arrays to evaluate structural boundaries (floors, walls, ledges) with absolute zero runtime garbage collection overhead.
+- **Encapsulated Extension Hooks:** Features clean, explicit virtual method hooks, allowing you to easily inject custom gameplay behaviors or specialized physics calculations without breaking the core movement loop.
 
 
