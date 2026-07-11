@@ -1,6 +1,10 @@
 # PixelDot2D Core Framework Feature List
 What’s Inside PixelDot2D Core Framework
 
+> [!NOTE]
+> **Living Architecture Notice:** This feature list serves as a high-level technical overview of the framework's primary infrastructure. PixelDot2D is under continuous, active development, with new subsystems, optimizations, and utility modules being integrated regularly. To prevent this document from expanding into an exhaustive API manual, we have focused exclusively on the most critical engineering milestones and performance metrics per sub-library. The framework contains substantial internal utility suites beyond what is outlined below.
+
+
 ## Table Of Contents
 
 - [Core Engine Layer](#core-engine-layer-the-autonomous-foundation)
