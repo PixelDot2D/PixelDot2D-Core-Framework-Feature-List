@@ -73,7 +73,7 @@ To ensure absolute stability during complex, multi-state reconfigurations, all s
 
 The Platformer sub-library delivers a highly optimized, streamlined movement controller engineered to demonstrate the seamless, practical integration of the core framework's primary infrastructure—including Asynchronous Serialization, Cross-Device Input wrappers, and the Interaction suite. This module acts as an approachable, lightweight entry point into the broader ecosystem architecture, providing a production-ready baseline that strictly enforces the framework’s high-performance architectural rules without the steep learning curve of fully virtualized or abstract systems.
 
-To preserve strict codebase purity, systems involving highly subjective or design-dependent trade-offs—such as moving platform algorithms or combat mechanics—have been intentionally omitted. This delivers an pristine, unbloated "white-box" architecture, providing developers with a rock-solid, predictable foundation that is instantly ready for custom mechanical extensions.
+To preserve strict codebase purity, systems involving highly subjective or design-dependent trade-offs—such as moving platform algorithms or combat mechanics—have been intentionally omitted. This delivers a pristine, unbloated "white-box" architecture, providing developers with a rock-solid, predictable foundation that is instantly ready for custom mechanical extensions.
 
 ### Platformer Key Technical Features:
 
