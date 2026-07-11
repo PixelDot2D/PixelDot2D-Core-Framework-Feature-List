@@ -25,8 +25,7 @@ An isolated, self-sustaining foundation housed within its own explicit Assembly 
 - **Polymorphic Sensor Utilities:** Highly optimized, sensor-mimicking `ScriptableObjects` designed to streamline structural environmental diagnostics (including Ground, Wall, Ledge, and Component-interface checks) without requiring codebase rewrites.
 - **Low-Overhead Native Collision Matrix:** Bypasses Box2D simulation overhead and C++ marshalling costs by routing operations directly through raw native casting lines, managed by a plain C# orchestration manager. The system guarantees absolute zero runtime garbage collection while perfectly emulating Unity's complete physics lifecycle (`OnTriggerEnter`, `OnTriggerStay`, `OnTriggerExit`) using batched payload buffers to return all frame results simultaneously for highly informed, performant gameplay logic.
 
-
-
+---
 
 ## Combat Sub-Library (The Universal 2D Execution Engine)
 
@@ -42,4 +41,8 @@ Weapon systems are frequently a bloated labyrinth of deeply nested GameObjects, 
 - **Frame-Driven Combat Synchronization:** Unify raw entity locomotion, offensive actions, and active animation sequences frame-by-frame utilizing a clean, centralized `ScriptableObject` workflow. Lock execution triggers to strict, frame-perfect timing windows, or leave constraint frames empty to permit unconstrained, rapid-fire multi-hit offensive chains.
 - **Lean Weapon Management API:** A streamlined, high-level API enabling entities to safely equip, register, and stack multiple distinct weapon profiles simultaneously with zero structural codebase modifications.
 - **Runtime Component Swapping:** Gain granular, atomic control over the core weaponized module's internal configuration, allowing you to hot-swap individual mechanical weapon components, firing rules, and execution logic on the fly at runtime.
+
+---
+
+
 
