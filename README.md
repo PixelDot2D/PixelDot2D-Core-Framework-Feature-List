@@ -77,7 +77,7 @@ To preserve strict codebase purity, systems involving highly subjective or desig
 
 ### Platformer Key Technical Features:
 
-- **Deterministic States:** Out-of-the-box support for precise, frame-perfect genre mechanics, including Grounded, Airborne (with integrated Coyote Time and multi-jump support), Gliding, Wall Climbs, Ledge Grabs, and One-Way Platform pass-throughs.
+- **Deterministic States:** Out-of-the-box support for precise, frame-perfect genre mechanics, including Grounded, Airborne (with integrated Coyote Time and multi-jump support), Gliding, Wall Climbs, and Ledge Grabs.
 - **Frictionless Onboarding Architecture:** Designed with a lean, visible implementation footprint that avoids dense abstraction layers, making it highly readable and exceptionally easy to debug or modify.
 - **Native Engine Harmony:** Striking an ideal balance for rapid prototyping, this sub-library interfaces directly with standard Unity physics components while still benefiting from the framework's decoupled data structures.
 - **Plug-and-Play Systems Validation:** Serves as a live, functional blueprint displaying exactly how to map runtime data to the save/load pipeline and pass mechanical inputs through the central wrapper.
