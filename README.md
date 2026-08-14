@@ -30,6 +30,7 @@ An isolated, self-sustaining foundation housed within its own explicit Assembly 
 - **Lightweight Sprite Animator:** A streamlined, code-driven sprite animation engine that completely bypasses the heavy memory and evaluation overhead of Unity’s native Mecanim state-machine graphs while supporting advanced sequence-based frame animations out of the box.
 - **Polymorphic Sensor Utilities:** Highly optimized, sensor-mimicking `ScriptableObjects` designed to streamline structural environmental diagnostics (including Ground, Wall, Ledge, and Component-interface checks) without requiring codebase rewrites.
 - **Low-Overhead Native Collision Matrix:** Bypasses Box2D simulation overhead and C++ marshalling costs by routing operations directly through raw native casting lines, managed by a plain C# orchestration manager. The system guarantees absolute zero runtime garbage collection while perfectly emulating Unity's complete physics lifecycle (`OnTriggerEnter`, `OnTriggerStay`, `OnTriggerExit`) using batched payload buffers to return all frame results simultaneously for highly informed, performant gameplay logic.
+  
 - **Inversion-Driven Line of Sight System:** A high-performance line-of-sight architecture that completely centralizes spatial visibility checking and permanently eliminates manual physics boilerplate across your projects. Implemented via a polymorphic factory pattern, the architecture decouples execution from native game loops using a standardized 3-tier triad (Data, ScriptableObject, and State components), allowing developers to add or swap custom visibility shapes seamlessly without modifying host code. To maximize runtime performance, the execution pipeline utilizes an inverted logic model: rather than querying dynamic target entities, it isolates evaluation strictly to environmental obstacle masks and maps queries to a fixed, single-slot results buffer. This inversion enables developers to reuse a single ScriptableObject asset across completely unique entities even as their individual Player, Enemy, or NPC targets change, since the core obstacle layers (such as walls, floors, and doors) remain uniform across all actors. This architectural shift allows the underlying physics engine to instantly short-circuit, terminating processing calculations the exact moment a single piece of cover geometry is encountered. The entire system is engineered for zero-garbage runtime execution, caches squared distance bounds at initialization to completely bypass expensive distance square-root operations, and features a comprehensively formatted header document detailing step-by-step implementation, usage, the underlying architectural reasoning, and extension guidelines.
 
 ---
@@ -46,6 +47,7 @@ Weapon systems are frequently a bloated labyrinth of deeply nested GameObjects, 
 - **Custom Colliderless Projectiles:** Hyper-optimized to squeeze out maximum hardware performance when coordinating 1,000+ active objects simultaneously. Easily author advanced projectile behaviors without the memory footprint of Box2D or the architectural complexity of Unity's ECS.
 - **Independent Trigger Lifecycles:** Recreates a complete `OnTriggerEnter`, `OnTriggerStay`, and `OnTriggerExit` simulation matrix completely outside of Unity's native physics loop, supplying your custom gameplay systems with all required lifecycle hooks via a lightweight, high-speed data pipeline.
 - **Frame-Driven Combat Synchronization:** Unify raw entity locomotion, offensive actions, and active animation sequences frame-by-frame utilizing a clean, centralized `ScriptableObject` workflow. Lock execution triggers to strict, frame-perfect timing windows, or leave constraint frames empty to permit unconstrained, rapid-fire multi-hit offensive chains.
+  
 - **Lean Weapon Management API:** A streamlined, high-level API enabling entities to safely equip, register, and stack multiple distinct weapon profiles simultaneously with zero structural codebase modifications.
 - **Runtime Component Swapping:** Gain granular, atomic control over the core weaponized module's internal configuration, allowing you to hot-swap individual mechanical weapon components, firing rules, and execution logic on the fly at runtime.
 
@@ -66,6 +68,7 @@ To ensure absolute stability during complex, multi-state reconfigurations, all s
 - **Interface-Driven Pipeline:** Requirements are restricted to a single, thin interface (`IModularCharacter`), completely eliminating the restrictive constraints and engineering clutter of forced class inheritance.
 - **Virtual Lazy State Pooling:** Advanced internal memory management that dynamically tracks usage metrics, keeping only actively required states allocated while recycling dormant instances to optimize CPU cache locality.
 - **Modular "Lego-Style" Passives:** Deconstruct passive mechanics into interchangeable `ScriptableObject` functional cogs, allowing you to assemble intricate gameplay synergies with zero manual script modifications.
+  
 - **Infinite Entity Reusability:** Deploy one unified, universal controller profile to drive player characters, hostile enemies, AI companions, or any arbitrary 2D entity in your project layout.
 
 ---
@@ -83,6 +86,7 @@ To preserve strict codebase purity, systems involving highly subjective or desig
 - **Native Engine Harmony:** Striking an ideal balance for rapid prototyping, this sub-library interfaces directly with standard Unity physics components while still benefiting from the framework's decoupled data structures.
 - **Plug-and-Play Systems Validation:** Serves as a live, functional blueprint displaying exactly how to map runtime data to the save/load pipeline and pass mechanical inputs through the central wrapper.
 - **Zero-Allocation Environment Sampling:** Utilizes the Core Physics Module's native casting arrays to evaluate structural boundaries (floors, walls, ledges) with absolute zero runtime garbage collection overhead.
+  
 - **Encapsulated Extension Hooks:** Features clean, explicit virtual method hooks, allowing you to easily inject custom gameplay behaviors or specialized physics calculations without breaking the core movement loop.
 
 ---
