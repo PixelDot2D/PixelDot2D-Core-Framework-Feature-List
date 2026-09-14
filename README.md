@@ -12,6 +12,7 @@ What’s Inside PixelDot2D Core Framework
 - [Core Engine Layer](#core-engine-layer-the-autonomous-foundation)
 - [Combat Sub-Library](#Combat-Sub-Library-The-Universal-2D-Execution-Engine)
 - [Modular Character Sub-Library](#modular-character-Sub-Library-Full-Runtime-Reconfigurability)
+- [Items Sub-Library](#items-Sub-Library-Full-Runtime-Reconfigurability)
 - [Platformer Sub-Library](#Platformer-Sub-Library)
 
 ---
@@ -70,6 +71,62 @@ To ensure absolute stability during complex, multi-state reconfigurations, all s
 - **Modular "Lego-Style" Passives:** Deconstruct passive mechanics into interchangeable `ScriptableObject` functional cogs, allowing you to assemble intricate gameplay synergies with zero manual script modifications.
   
 - **Infinite Entity Reusability:** Deploy one unified, universal controller profile to drive player characters, hostile enemies, AI companions, or any arbitrary 2D entity in your project layout.
+
+---
+
+### Items Sub-Library
+
+Built as an optional, high-performance extension package for entities requiring robust item, storage, and equipment lifecycles. 
+
+### Assembly & Dependency Structure
+
+- **Decoupled Architecture:** Built directly on top of the `ModularCharacter` sub-library, ensuring that while it enhances character capabilities, the core character framework remains completely independent.
+- **Optional Integration:** Isolated entirely within its own Assembly Definition (`.asmdef`).
+- **Safe Deletion Safeguards:** True to the framework's strict rule of open extensibility, the entire sub-library folder can be safely deleted from your project structure without breaking or throwing compilation errors in any pre-existing `ModularCharacter` setups.
+
+### Core Sub-System Components
+
+- **ItemLibrary:** Acts as the centralized, optimized database and lookup registry for item asset definitions.
+- **InventoryManager:** A pure, standalone plain C# engine completely decoupled from Unity lifecycles, character containers, or specific UI view logic. It can be universally deployed across players, AI agents, NPCs, world stashes, or loot containers.
+- **CharacterInventory:** A specialized, character-bound wrapper component that orchestrates an `InventoryManager` alongside an `EquipmentManager` to cleanly process gear loadouts, provide inventory access, and apply equipment data modifications to any active `ModularCharacter`.
+
+### Advanced Transaction Engine and UI Safety
+
+- **UI-Safe Mutation Architecture:** Internal slot items never swap raw memory references. Instead, slots swap their internal structural data definitions, ensuring external UI elements and view caches remain perfectly valid, tracked, and completely safe from stale data bugs.
+- **Comprehensive Transaction Suite:** Built-in native support for high-utility storage methods out of the box:
+    - *Swap Slots:* Seamless intra-container item repositioning.
+    - *Inter-Inventory Swap:* Smooth, cross-container slot-to-slot transfers (e.g., Player to Bank).
+    - *Take All:* Automated sequential bulk allocation from external stashes or loot drops.
+    - *Quick Stack:* Smart, multi-stack aggregation that consolidates partial piles left-to-right into existing layout groupings without creating visual clutter or fragmented slot footprints.
+- **Duplication Exploit Protection:** Packed with robust internal validation routines, unique guard clauses, and diverse method overloads to ensure every transaction is completely guarded against item duplication exploits, allowing developers to safely drive inventory operations through a unified, high-level API.
+
+### Composition-Based Item Design (Open/Closed Principle)
+
+- **Zero Rigid Logic:** The core item class acts strictly as an empty structural container that performs no hardcoded gameplay calculations, protecting your codebase from architectural bloating.
+- **Frictionless Extension:** To create entirely new item behaviors, developers simply inherit from the base abstract component class. New scripts can be dropped directly into an item asset configuration within the Unity Inspector without ever modifying the core item source files.
+- **Requirement Validation:** Restrictive validation rules can be plugged into any asset configuration to safely verify baseline character attributes or active status traits before allowing an item to be used or equipped.
+- **Infinite Item Variations:** By mixing, matching, and stacking modular data-driven pieces, you can orchestrate limitless item combinations out of the box, including:
+    - *Consumables:* Simple health-restoration or mana-restoration potions.
+    - *Stat Buffs:* Flasks that grant temporary attribute multipliers for a specified duration.
+    - *Character Passives:* Equipment assets that directly alter character properties and status states.
+    - *Ability Unlocks:* Complex artifacts that inject entirely new capabilities into a `ModularCharacter` (such as dashing, wall-climbing, or extra air-jumps).
+
+> [!NOTE]
+> **Combat Cross-Library Integration:** If developers choose to merge the Combat and Modular Character sub-libraries, they can leverage an identical architectural pipeline. The combat system's `WeaponManager` reads a ScriptableObject blueprint (`SO_MultiWeaponizedModule_BluePrint`) and dynamically alters the internal weapon structure to match. Because of this shared design pattern, items can completely transform weapon behaviors on the fly, just as they inject character abilities like hovering, dashing, or wall-climbing.
+
+### Pre-Wired Data Persistence (Serialization)
+
+- **Seamless Pass-Through Design:** Every inventory container features built-in serialization handling pre-wired to the native `PixelDot2D.Core` saving architecture.
+- **Zero Inventory Code Modification:** Developers never need to write custom save file handlers, parse file streams, or modify the underlying inventory engine.
+- **Frictionless Interface Implementation:** To save any inventory, simply add the `ISaveableAndLoadable` interface to your preferred parent GameObject or controller, and execute a quick forward-call to invoke the underlying inventory's save and load pipeline routines internally.
+
+### Layered Loot Tables Sub-System
+
+- **Quad-Stage Loot Table Engine:** Included within the items extension is a specialized quad-stage loot table engine that allows developers to completely bypass flat, linear probability drop lists and weights by introducing deep, multi-tiered roll isolation. Designers can establish an explicit gatekeeper entry chance on a single index row, then pack its internal array with heavy filler drops surrounding exactly one ultra-rare jackpot item to create intense game-loot tension.
+- **Structural Priority-Based Trapping:** The execution pipeline evaluates data configurations sequentially from Index 0 upward. Because the runtime automatically executes a hard, deterministic short-circuit the moment the running item count hits the maximum allowed threshold, array positioning natively dictates statistical priority. This allows designers to balance drop priority purely through the visual order of the inspector list, without requiring complex script overrides or heavy external logic blocks. 
+- **State-Blind Reusable Processors:** The core calculation manager is completely state-blind and decoupled from specific character controllers. It can be composed natively into any game entity—including enemies, procedural containers, breakable objects, merchants, and world chests—allowing a single database configuration asset to be safely shared and re-used across an endless amount of active entities.
+- **Low API Friction:** Introducing loot drops into any entity takes only a few lines of code, and transferring a rolled payload into a target inventory requires a single line of code. The processor drops results natively into a pre-allocated container, allowing the main framework to instantly absorb, validate, and clear the data packet with a zero runtime garbage memory footprint, seamlessly handling drops from dead enemies, randomly spawned chests, and world stashes out of the box.
+
 
 ---
 
