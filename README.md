@@ -12,7 +12,7 @@ What’s Inside PixelDot2D Core Framework
 - [Core Engine Layer](#core-engine-layer-the-autonomous-foundation)
 - [Combat Sub-Library](#Combat-Sub-Library-The-Universal-2D-Execution-Engine)
 - [Modular Character Sub-Library](#modular-character-Sub-Library-Full-Runtime-Reconfigurability)
-- [Items Sub-Library](#items-Sub-Library-Full-Runtime-Reconfigurability)
+- [Items Sub-Library](#items-Sub-Library)
 - [Platformer Sub-Library](#Platformer-Sub-Library)
 
 ---
