@@ -857,7 +857,469 @@ You do not need to rebuild the character framework every time your game needs a 
 **Build the character you need, without rebuilding the character controller.**
 
 
+---
 
+
+## Items
+
+**Build items from reusable components, then let the rest of the framework handle what those items do.**
+
+Items are built on top of the same modular architecture used throughout PixelDot2D.
+
+Instead of creating separate hard-coded systems for every potion, piece of equipment, consumable, material, or special item, an item is assembled from reusable components and requirements.
+
+Inventory, equipment, loot, crafting, currency, and merchants then build on that same foundation.
+
+The result is a relatively small Items library that can still support a surprisingly large range of gameplay systems.
+
+---
+
+### Build Items from Components
+
+An item starts with an `SO_ItemBlueprint`.
+
+The Blueprint defines the item's identity, requirements, and behavior through reusable ScriptableObject components.
+
+```text id="j7bq1m"
+Item Blueprint
+│
+├── Item ID
+├── Requirements
+└── Components
+     ├── Modify Stats
+     ├── Modify Current Stats
+     ├── Apply Passives
+     └── Custom Components
+```
+
+Components can be combined, reordered, and reused to create different item behaviors.
+
+For example, a single item could:
+
+* Increase maximum health
+* Restore current mana
+* Apply a passive effect
+* Require a specific character condition
+* Combine several of these behaviors together
+
+A complex item does not require a new monolithic item class.
+
+The item simply becomes a composition of reusable behaviors.
+
+---
+
+### Items Integrate With Modular Character
+
+Items do not need to implement their own character-stat or passive architecture.
+
+They use the systems already provided by Modular Character.
+
+Equipment can apply structural stat changes or passive behavior directly to a `ModularCharacterController`, while the item itself remains focused on defining **what it provides**.
+
+This means the same character systems can be used by:
+
+* Equipment
+* Consumables
+* Buffs
+* Debuffs
+* Character abilities
+* Other gameplay systems
+
+The Items library does not duplicate those systems.
+
+**Items use the character architecture instead of creating another one.**
+
+---
+
+### Requirements
+
+Items can define reusable requirements that are evaluated before their components are applied.
+
+Requirements can be used to control whether an item is allowed to affect a character based on the game's rules.
+
+Because requirements are separate from item components, the same requirement logic can be reused across many different items.
+
+The item itself does not need to know how the requirement works.
+
+It simply asks:
+
+> **Can this item be used here?**
+
+If every requirement passes, the item's components are applied.
+
+If one fails, the operation stops.
+
+---
+
+### Inventory
+
+`InventoryManager` provides standalone inventory infrastructure that is not tied to a character.
+
+The same inventory system can therefore be used by:
+
+* Players
+* NPCs
+* Enemies
+* Chests
+* Containers
+* Loot drops
+* World objects
+* Merchants
+* Custom gameplay systems
+
+Inventory slots support item stacking, insertion, removal, and querying without requiring the inventory itself to understand what owns it.
+
+A higher-level `CharacterInventory` wrapper connects the same inventory infrastructure to Modular Character and adds equipment integration when a character needs it.
+
+```text id="0k4p8x"
+CharacterInventory
+│
+├── InventoryManager
+└── EquipmentManager
+```
+
+This keeps the underlying inventory system reusable while still providing a convenient character-specific layer.
+
+---
+
+### Equipment
+
+Equipment builds directly on the character and inventory systems.
+
+`EquipmentManager` handles equipped item profiles while remaining encapsulated inside `CharacterInventory`.
+
+Equipped items can therefore influence the character through the same modular item components used elsewhere.
+
+The framework also provides Editor-only runtime snapshots of equipped items for debugging.
+
+These snapshots are diagnostic views rather than the actual runtime data, allowing complex runtime equipment state to remain visible without turning the Inspector representation into the source of gameplay behavior.
+
+---
+
+### Persistence-Ready Inventory
+
+Inventory data is already integrated with Core's `ISaveableAndLoadable` architecture.
+
+Inventory containers and their individual item slots participate in the framework's existing save/load infrastructure rather than requiring Items to implement a separate persistence system.
+
+This means inventories can participate in the same asynchronous, guarded save pipeline provided by Core.
+
+The same infrastructure can therefore persist:
+
+* Player inventories
+* Character equipment
+* Chests
+* Containers
+* Other inventory-bearing systems
+
+Items remain focused on gameplay while Core handles the persistence machinery.
+
+---
+
+### Item IDs Without One Giant Enum
+
+Large item databases can quickly become difficult to manage if every item shares one enormous enum.
+
+PixelDot2D avoids that by splitting item identity into categories.
+
+```text id="y1h5r2"
+Item Categories
+│
+├── Consumables
+│   ├── Potions
+│   ├── Flasks
+│   └── ...
+│
+├── Gear
+│   ├── Helmets
+│   ├── Chests
+│   └── ...
+│
+└── Custom Categories
+```
+
+Each category has its own localized item ID collection while the framework maintains the larger category mapping.
+
+This keeps the Inspector and codebase organized as the item database grows.
+
+You can add an entire new category without turning one global enum into an unmanageable list.
+
+---
+
+### Item Library
+
+`ItemLibrary` provides the centralized bridge between item identities and their actual `SO_ItemBlueprint` assets.
+
+Items can still be inspected and worked with directly through serialized inventory data, but the Item Library provides a consistent runtime lookup and registration layer for projects that need a structured item database and persistence.
+
+At initialization, item assets are validated and indexed into fast runtime lookups.
+
+This gives the rest of the framework a consistent way to resolve:
+
+```text
+Category + Item ID
+        ↓
+Item Blueprint
+```
+
+The library is especially useful when items need to survive save/load cycles, because the saved data can identify the item rather than depending on a direct object reference.
+
+**The inventory stores what the player has. The library provides a consistent identity for what that item is.**
+
+---
+
+### Loot Tables
+
+Loot is handled through reusable `SO_LootTable` configurations rather than hard-coded drop logic.
+
+Loot tables can be assigned to enemies, containers, world objects, or any other system that needs randomized item distribution.
+
+More importantly, loot tables can be **nested**.
+
+A loot table can contain other loot tables, which can themselves contain additional tables.
+
+This allows probability structures to be built visually in the Inspector.
+
+For example:
+
+```text id="5g5n7a"
+Main Loot Table
+│
+├── Junk
+├── Junk
+├── Junk
+└── Rare Loot Table
+      │
+      ├── Common
+      ├── Common
+      ├── Common
+      └── Extremely Rare
+```
+
+By controlling the composition and repetition of entries, you can create layered probability distributions without manually calculating and hard-coding every final outcome.
+
+This makes sophisticated loot weighting possible while keeping the configuration understandable and editable.
+
+You can build the probability structure visually rather than writing a custom loot algorithm for every enemy or container.
+
+---
+
+### Crafting
+
+Crafting is driven by reusable crafting table configurations.
+
+A `CraftingStation` can use a ScriptableObject crafting table and swap that configuration during runtime.
+
+This makes progression-based crafting straightforward to represent.
+
+For example:
+
+```text
+Basic Workbench
+      ↓
+Upgraded Workbench
+      ↓
+Advanced Workbench
+```
+
+The underlying crafting system does not need to change.
+
+Only the active crafting configuration changes.
+
+Crafting stations can therefore represent anything from a simple workbench to upgraded facilities with completely different available recipes.
+
+---
+
+### Craft From Multiple Inventories
+
+Crafting is not limited to pulling materials from a single inventory.
+
+`CraftingStation` can evaluate multiple `InventoryManager` instances as a combined material source.
+
+For example:
+
+```text
+Chest A → 1 Wood
+Chest B → 1 Wood
+Chest C → 1 Wood
+   ...
+Chest Z → 1 Wood
+
+            ↓
+
+      Crafting Recipe
+        Requires 26 Wood
+
+            ↓
+
+      Combined Resources
+        26 Wood Available
+
+            ↓
+
+       Craft Successfully
+```
+
+The system searches across the supplied inventories and aggregates their available materials.
+
+If a recipe requires 100 Wood and those 100 Wood are distributed across 100 different chests, the recipe can still be crafted.
+
+The crafting system does not care which individual container holds the materials.
+
+---
+
+### Transaction-Safe Crafting
+
+Resource consumption uses a validation-first process.
+
+Before removing anything, the crafting system:
+
+1. Checks that the destination inventory has enough space for the crafted result.
+2. Performs a dry-run across all source inventories.
+3. Verifies that **every recipe requirement** can be completely satisfied.
+4. Only after validation succeeds does it begin deducting materials.
+5. Consumes the required resources across the inventories until the recipe is fully satisfied.
+6. Places the crafted item into the specified destination inventory.
+
+If the combined inventories contain insufficient resources, the craft simply fails without partially consuming anything.
+
+```text
+Validate
+   │
+   ├── Output Space ──────── ✓
+   ├── Requirement A ─────── ✓
+   ├── Requirement B ─────── ✓
+   └── Requirement C ─────── ✓
+             │
+             ▼
+          Deduct
+             │
+             ▼
+          Craft
+             │
+             ▼
+      Add Output Item
+```
+
+The source and destination inventories are also explicitly separated.
+
+This means you can choose exactly where materials are allowed to come from and where the crafted item should be placed.
+
+For example, a player's inventory can be used as both a source and destination simply by passing it into both roles.
+
+The important part is that the framework handles the multi-container search, validation, deduction, and failure safety for you.
+
+**Give the crafting system the inventories. It handles the rest.**
+
+---
+
+### Currency
+
+Currency is implemented as a lightweight, reusable ledger rather than being tied to a player.
+
+The same currency system can be composed into:
+
+* Players
+* NPCs
+* Merchants
+* Chests
+* World objects
+* Custom economic systems
+
+Currency state also participates in Core's save/load architecture.
+
+The persistence system takes a safe snapshot of the currency data before handing the serialized representation to the background save process, keeping the live runtime collection isolated from the asynchronous persistence work.
+
+This allows currency to participate in the same performance-conscious persistence architecture as the rest of the framework.
+
+---
+
+### Merchants
+
+`MerchantManager` provides reusable buying, selling, and buy-back functionality without tying commerce to a specific character or scene object.
+
+Merchant inventories can be configured through reusable merchant tables and swapped dynamically at runtime.
+
+Most importantly, **items do not dictate their own universal merchant price.**
+
+An item can define its general vendor value, but each merchant can establish its own pricing rules.
+
+That means the same item can legitimately have different prices depending on where it is sold:
+
+```text
+Merchant A
+Coal → 1 Gold
+
+Merchant B
+Coal → 1 Gem
+
+Merchant C
+Coal → 10 Gold
+```
+
+The item remains unaware of the merchant's economy.
+
+This keeps item data reusable while allowing individual merchants, factions, locations, or progression systems to establish their own economies.
+
+---
+
+### Designed for Composition
+
+Items follow the same architectural philosophy as the rest of PixelDot2D.
+
+You can combine:
+
+**Item + Stat Modifier**
+
+or
+
+**Item + Passive + Requirement**
+
+or
+
+**Item + Multiple Stat Changes + Passive + Requirements**
+
+Then place those items into inventories, equipment systems, loot tables, crafting recipes, merchants, or completely custom gameplay systems.
+
+The Items library does not need a giant class hierarchy to support this.
+
+It reuses the systems already provided by Core and Modular Character.
+
+---
+
+### Built to Grow With Your Game
+
+The Items library is intentionally small because it does not attempt to duplicate the architecture underneath it.
+
+Core provides:
+
+* Persistence
+* Interfaces
+* Runtime infrastructure
+* Performance-conscious utilities
+
+Modular Character provides:
+
+* Stats
+* Passives
+* Character behavior
+* State-driven systems
+
+Items provides:
+
+* Item composition
+* Inventory
+* Equipment
+* Loot
+* Crafting
+* Currency
+* Merchants
+
+Each layer stays focused on its own responsibility.
+
+That makes the Items library easy to extend without turning it into another monolithic gameplay system.
+
+**The framework handles the systems around the item. You decide what the item does.**
 
 ---
 *Copyright 2026 - Present © PixelDot2D - All Rights Reserved | Contact: PixelDot2D@gmail.com*
