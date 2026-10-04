@@ -140,6 +140,8 @@ The implementation is intentionally more concrete and `MonoBehaviour`-friendly, 
 
 It also includes practical examples of framework systems such as input and keybind management, demonstrating how common functionality can be integrated with minimal code.
 
+**The Platformer Sub-Library is primarily a reference and learning implementation, not a general-purpose platformer foundation.**
+
 **Less abstraction. Same architectural principles.**
 
 
@@ -148,7 +150,7 @@ It also includes practical examples of framework systems such as input and keybi
 * Deterministic state-driven movement
 * Grounded, Airborne, Glide, Wall Climb, and Ledge Grab states
 * Coyote time and multi-jump support
-* Framework input, serialization, and interaction integration
+* Framework input, saving and loading, and interaction integration
 * Zero-allocation environment sampling
 * Explicit extension points
 
