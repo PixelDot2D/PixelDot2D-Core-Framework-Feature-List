@@ -1321,6 +1321,41 @@ That makes the Items library easy to extend without turning it into another mono
 
 **The framework handles the systems around the item. You decide what the item does.**
 
+
+---
+
+
+## Platformer
+
+**A straightforward example of putting the framework's architecture together.**
+
+Platformer is a small, more approachable implementation of a 2D platformer / metroidvania-style player.
+
+It uses the same core ideas found throughout PixelDot2D:
+
+* Isolated state-driven behavior
+* Core physics and sensor systems
+* ScriptableObject-driven configuration
+* Lightweight runtime state classes
+* Centralized orchestration
+* Queued state transitions
+* Reusable animation and input systems
+
+The difference is that Platformer keeps the implementation much closer to familiar Unity patterns.
+
+`Actor_PlatformerPlayer` acts as the main MonoBehaviour hub, while individual player behaviors are separated into states such as movement, airborne behavior, attacks, wall movement, and other abilities.
+
+This makes the codebase useful for seeing **how the same architectural structure can be applied without requiring the heavier abstractions of Modular Character.**
+
+It also demonstrates practical integration with Core systems, including runtime key rebinding and saving/loading those configurations.
+
+For example, keybinds can be changed at runtime, reset to defaults, and persisted through the existing `KeybindManager` and `SaveAndLoadManager` systems.
+
+Platformer is therefore less about providing another large framework layer and more about showing the architecture in a concrete, easy-to-follow implementation.
+
+**Same principles. Simpler surface.**
+
+
 ---
 *Copyright 2026 - Present © PixelDot2D - All Rights Reserved | Contact: PixelDot2D@gmail.com*
 
