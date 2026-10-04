@@ -4,157 +4,859 @@ What’s Inside PixelDot2D Core Framework
 **Available on the:** [Unity Asset Store](https://assetstore.unity.com/packages/tools/utilities/pixeldot2d-core-framework-370674)
 
 > [!NOTE]
-> **Living Architecture Notice:** This feature list serves as a high-level technical overview of the framework's primary infrastructure. PixelDot2D is under continuous, active development, with new subsystems, optimizations, and utility modules being integrated regularly. To prevent this document from expanding into an exhaustive API manual, we have focused exclusively on the most critical engineering milestones and performance metrics per sub-library. The framework contains substantial internal utility suites beyond what is outlined below.
+> **Living Architecture**
+>
+> PixelDot2D is actively developed, so this feature list focuses on the major systems and capabilities rather than attempting to document every API, utility, or internal implementation detail.
+>
+> Each library provides substantially more functionality than can reasonably be listed here. The goal of this document is to show **what PixelDot2D can do and how its systems fit together**, while the source code and XML documentation provide the deeper technical details when you need them.
 
-
-## Table Of Contents
-
-- [Core Engine Layer](#core-engine-layer-the-autonomous-foundation)
-- [Combat Sub-Library](#Combat-Sub-Library-The-Universal-2D-Execution-Engine)
-- [Modular Character Sub-Library](#modular-character-Sub-Library-Full-Runtime-Reconfigurability)
-- [Items Sub-Library](#items-Sub-Library)
-- [Platformer Sub-Library](#Platformer-Sub-Library)
-
----
-
-## Core Engine Layer (The Autonomous Foundation)
-
-An isolated, self-sustaining foundation housed within its own explicit Assembly Definition (`.asmdef`). Core is engineered to drop seamlessly into any project as a zero-dependency architecture. While it serves as the essential backbone for all downstream sub-libraries, it is entirely opt-in—allowing developers to leverage individual utility suites independently without installing or coupling the broader framework. The engine streamlines complex, high-frequency Unity engine overhead into high-performance operations without introducing project clutter.
-
-### Core Key Technical Features:
-
-- **Asynchronous Binary Serialization:** A robust, zero-bloat binary save/load engine featuring native Unity Object tracking that writes payloads to disk on a separate worker thread to completely eliminate runtime frame hiccups. Designed for friction-free integration, developers can map serializable data targets directly via Inspector drop zones without refactoring class structures. System registration requires only a single interface implementation and a local enum assignment; the underlying architecture handles the rest.
-- **Data-Driven Mover Orchestrator:** Drive and control any `Rigidbody2D` context entirely from the editor utilizing interchangeable `ScriptableObject` modular blocks. Developers can dynamically re-arrange, stack, and chain movement arrays on the fly to craft complex locomotion profiles with zero structural code changes.
-- **Decoupled Cross-Device Input Wrapper:** A hardware-agnostic input singleton that abstracts and routes Unity’s New Input System. The wrapper evaluates all active peripheral streams in parallel, allowing seamless, mid-session device hot-swapping without the overhead of nested conditional state machines.
-- **Ergonomic Extension Suite:** A comprehensive library of high-utility extension methods designed to eliminate daily boilerplate. Includes highly optimized bit-shifting operations, vector mathematics, deterministic `LookAt2D` calculations, and streamlined component cache operations.
-- **Type-Safe Object Pooling:** Highly reusable runtime memory pools powered by F-Bounded Polymorphism (CRTP). This enforces strict compile-time type safety, eliminating human configuration error, casting overhead, and heap fragmentation.
-- **Lightweight Sprite Animator:** A streamlined, code-driven sprite animation engine that completely bypasses the heavy memory and evaluation overhead of Unity’s native Mecanim state-machine graphs while supporting advanced sequence-based frame animations out of the box.
-- **Polymorphic Sensor Utilities:** Highly optimized, sensor-mimicking `ScriptableObjects` designed to streamline structural environmental diagnostics (including Ground, Wall, Ledge, and Component-interface checks) without requiring codebase rewrites.
-- **Low-Overhead Native Collision Matrix:** Bypasses Unity's inconsistent Collision lifecycle overhead and constant C++ marshalling costs by routing operations directly through raw native casting, managed by a plain C# orchestration manager. The system guarantees absolute zero runtime garbage collection while perfectly emulating Unity's complete physics lifecycle (`OnTriggerEnter`, `OnTriggerStay`, `OnTriggerExit`) using batched payload buffers to return all frame results simultaneously for highly informed, performant gameplay logic.
-  
-- **Inversion-Driven Line of Sight System:** A high-performance line-of-sight architecture that completely centralizes spatial visibility checking and permanently eliminates manual physics boilerplate across your projects. Implemented via a polymorphic factory pattern, the architecture decouples execution from native game loops using a standardized 3-tier triad (Data, ScriptableObject, and State components), allowing developers to add or swap custom visibility shapes seamlessly without modifying host code. To maximize runtime performance, the execution pipeline utilizes an inverted logic model: rather than querying dynamic target entities, it isolates evaluation strictly to environmental obstacle masks and maps queries to a fixed, single-slot results buffer. This inversion enables developers to reuse a single ScriptableObject asset across completely unique entities even as their individual Player, Enemy, or NPC targets change, since the core obstacle layers (such as walls, floors, and doors) remain uniform across all actors. This architectural shift allows the underlying physics engine to instantly short-circuit, terminating processing calculations the exact moment a single piece of cover geometry is encountered. The entire system is engineered for zero-garbage runtime execution, caches squared distance bounds at initialization to completely bypass expensive distance square-root operations, and features a comprehensively formatted header document detailing step-by-step implementation, usage, the underlying architectural reasoning, and extension guidelines.
-
----
-
-## Combat Sub-Library (The Universal 2D Execution Engine)
-
-Weapon systems are frequently a bloated labyrinth of deeply nested GameObjects, complex hierarchy configurations, and fragile native physics constraints. PixelDot2D fundamentally restructures this paradigm by treating combat as pure mathematical data, granting developers absolute authority over execution windows without any hierarchy overhead. The result is a highly comprehensive, genre-agnostic engine engineered to handle any 2D combat requirement with deterministic accuracy.
-
-### Combat Key Technical Features:
-
-- **100% Virtual Architecture:** Weapons exist strictly as logic-only, plain C# classes evaluated via manual update pumps. This keeps your hierarchy pristine and drops CPU overhead to near-zero margins.
-- **Interface-Driven Pipeline:** The combat subsystem is entirely decoupled from core framework code; any custom entity can seamlessly deploy, register, and utilize this system by implementing a single, lightweight interface.
-- **Live Visual Debugging:** Includes integrated Editor Gizmos that render weapon range boundaries, sweeping attack arcs, and active hitboxes in real-time inside the Unity Scene View for instantaneous visual feedback during gameplay tuning.
-- **Custom Colliderless Projectiles:** Hyper-optimized to squeeze out maximum hardware performance when coordinating 1,000+ active objects simultaneously. Easily author advanced projectile behaviors without the inconsistent collision lifecycle from Unity's Collision events or the architectural complexity of Unity's ECS.
-- **Independent Trigger Lifecycles:** Recreates a complete `OnTriggerEnter`, `OnTriggerStay`, and `OnTriggerExit` simulation matrix completely outside of Unity's native physics loop, supplying your custom gameplay systems with all required lifecycle hooks via a lightweight, high-speed data pipeline.
-- **Frame-Driven Combat Synchronization:** Unify raw entity locomotion, offensive actions, and active animation sequences frame-by-frame utilizing a clean, centralized `ScriptableObject` workflow. Lock execution triggers to strict, frame-perfect timing windows, or leave constraint frames empty to permit unconstrained, rapid-fire multi-hit offensive chains.
-  
-- **Lean Weapon Management API:** A streamlined, high-level API enabling entities to safely equip, register, and stack multiple distinct weapon profiles simultaneously with zero structural codebase modifications.
-- **Runtime Component Swapping:** Gain granular, atomic control over the core weaponized module's internal configuration, allowing you to hot-swap individual mechanical weapon components, firing rules, and execution logic on the fly at runtime.
-
----
-
-## Modular Character Sub-Library (Full Runtime Reconfigurability)
-
-Engineered explicitly for entities requiring real-time architectural evolution, dynamic status mutation, and total runtime restructuring. The framework enforces atomic control over individual isolated behaviors—enabling developers to seamlessly inject, hot-swap, or strip character logic on the fly across any genre utilizing a standard 2D physics plane, including side-scrollers, 2.5D hybrids, top-down shooters, space simulators, and more.
-
-To ensure absolute stability during complex, multi-state reconfigurations, all state transitions and behavior mutations are deferred through an isolated Queue System that completely neutralizes race conditions and volatile null-reference exceptions. This decoupled architecture enables absolute, zero-code-change extensibility: entirely new operational states can be introduced and integrated into existing character behaviors without altering a single line of pre-existing code inside the master orchestrator. By leveraging the data-driven input pipeline and automated flyweight factory, developers can map complex transitions into newly authored states directly from the Unity Inspector using pre-built blueprint templates engineered for any movement profile a native `Rigidbody2D` can execute.
-
-### Modular Character Key Technical Features:
-
-- **Plain C# Architecture:** Evaluates via centralized manual update pumps completely outside of traditional `MonoBehaviour` hierarchy overhead to guarantee absolute zero runtime garbage collection spikes.
-- **Frictionless Extensibility:** Inject entirely new structural logic seamlessly using built-in Flyweight and Factory design patterns without ever touching or modifying the core controller codebase.
-- **Scripted Composition States:** Mix, match, and orchestrate complex entity state lifecycles directly inside the editor utilizing interchangeable, data-driven `ScriptableObject` configurations.
-- **Intelligent Removal & Fallback:** Safely strip operational states or individual behaviors at runtime with automated fallback safeguards that smoothly revert the entity back to a default Master Blueprint state.
-- **Interface-Driven Pipeline:** Requirements are restricted to a single, thin interface (`IModularCharacter`), completely eliminating the restrictive constraints and engineering clutter of forced class inheritance.
-- **Virtual Lazy State Pooling:** Advanced internal memory management that dynamically tracks usage metrics, keeping only actively required states allocated while recycling dormant instances to optimize CPU cache locality.
-- **Modular "Lego-Style" Passives:** Deconstruct passive mechanics into interchangeable `ScriptableObject` functional cogs, allowing you to assemble intricate gameplay synergies with zero manual script modifications.
-  
-- **Infinite Entity Reusability:** Deploy one unified, universal controller profile to drive player characters, hostile enemies, AI companions, or any arbitrary 2D entity in your project layout.
-
----
-
-### Items Sub-Library
-
-Built as an optional, high-performance extension package for entities requiring robust item, storage, and equipment lifecycles. 
-
-### Assembly & Dependency Structure
-
-- **Decoupled Architecture:** Built directly on top of the `ModularCharacter` sub-library, ensuring that while it enhances character capabilities, the core character framework remains completely independent.
-- **Optional Integration:** Isolated entirely within its own Assembly Definition (`.asmdef`).
-- **Safe Deletion Safeguards:** True to the framework's strict rule of open extensibility, the entire sub-library folder can be safely deleted from your project structure without breaking or throwing compilation errors in any pre-existing `ModularCharacter` setups.
-
-### Core Sub-System Components
-
-- **ItemLibrary:** Acts as the centralized, optimized database and lookup registry for item asset definitions.
-- **InventoryManager:** A pure, standalone plain C# engine completely decoupled from Unity lifecycles, character containers, or specific UI view logic. It can be universally deployed across players, AI agents, NPCs, world stashes, or loot containers.
-- **CharacterInventory:** A specialized, character-bound wrapper component that orchestrates an `InventoryManager` alongside an `EquipmentManager` to cleanly process gear loadouts, provide inventory access, and apply equipment data modifications to any active `ModularCharacter`.
-
-### Advanced Transaction Engine and UI Safety
-
-- **UI-Safe Mutation Architecture:** Internal slot items never swap raw memory references. Instead, slots swap their internal structural data definitions, ensuring external UI elements and view caches remain perfectly valid, tracked, and completely safe from stale data bugs.
-- **Comprehensive Transaction Suite:** Built-in native support for high-utility storage methods out of the box:
-    - *Swap Slots:* Seamless intra-container item repositioning.
-    - *Inter-Inventory Swap:* Smooth, cross-container slot-to-slot transfers (e.g., Player to Bank).
-    - *Take All:* Automated sequential bulk allocation from external stashes or loot drops.
-    - *Quick Stack:* Smart, multi-stack aggregation that consolidates partial piles left-to-right into existing layout groupings without creating visual clutter or fragmented slot footprints.
-- **Duplication Exploit Protection:** Packed with robust internal validation routines, unique guard clauses, and diverse method overloads to ensure every transaction is completely guarded against item duplication exploits, allowing developers to safely drive inventory operations through a unified, high-level API.
-
-### Composition-Based Item Design (Open/Closed Principle)
-
-- **Zero Rigid Logic:** The core item class acts strictly as an empty structural container that performs no hardcoded gameplay calculations, protecting your codebase from architectural bloating.
-- **Frictionless Extension:** To create entirely new item behaviors, developers simply inherit from the base abstract component class. New scripts can be dropped directly into an item asset configuration within the Unity Inspector without ever modifying the core item source files.
-- **Requirement Validation:** Restrictive validation rules can be plugged into any asset configuration to safely verify baseline character attributes or active status traits before allowing an item to be used or equipped.
-- **Infinite Item Variations:** By mixing, matching, and stacking modular data-driven pieces, you can orchestrate limitless item combinations out of the box, including:
-    - *Consumables:* Simple health-restoration or mana-restoration potions.
-    - *Stat Buffs:* Flasks that grant temporary attribute multipliers for a specified duration.
-    - *Character Passives:* Equipment assets that directly alter character properties and status states.
-    - *Ability Unlocks:* Complex artifacts that inject entirely new capabilities into a `ModularCharacter` (such as dashing, wall-climbing, or extra air-jumps).
-
-> [!NOTE]
-> **Combat Cross-Library Integration:** If developers choose to merge the Combat and Modular Character sub-libraries, they can leverage an identical architectural pipeline. The combat system's `WeaponManager` reads a ScriptableObject blueprint (`SO_MultiWeaponizedModule_BluePrint`) and dynamically alters the internal weapon structure to match. Because of this shared design pattern, items can completely transform weapon behaviors on the fly, just as they inject character abilities like hovering, dashing, or wall-climbing.
-
-### Pre-Wired Data Persistence (Serialization)
-
-- **Seamless Pass-Through Design:** Every inventory container features built-in serialization handling pre-wired to the native `PixelDot2D.Core` saving architecture.
-- **Zero Inventory Code Modification:** Developers never need to write custom save file handlers, parse file streams, or modify the underlying inventory engine.
-- **Frictionless Interface Implementation:** To save any inventory, simply add the `ISaveableAndLoadable` interface to your preferred parent GameObject or controller, and execute a quick forward-call to invoke the underlying inventory's save and load pipeline routines internally.
-
-### Layered Loot Tables Sub-System
-
-- **Quad-Stage Loot Table Engine:** Included within the items extension is a specialized quad-stage loot table engine that allows developers to completely bypass flat, linear probability drop lists and weights by introducing deep, multi-tiered roll isolation. Designers can establish an explicit gatekeeper entry chance on a single index row, then pack its internal array with heavy filler drops surrounding exactly one ultra-rare jackpot item to create intense game-loot tension.
-- **Structural Priority-Based Trapping:** The execution pipeline evaluates data configurations sequentially from Index 0 upward. Because the runtime automatically executes a hard, deterministic short-circuit the moment the running item count hits the maximum allowed threshold, array positioning natively dictates statistical priority. This allows designers to balance drop priority purely through the visual order of the inspector list, without requiring complex script overrides or heavy external logic blocks. 
-- **State-Blind Reusable Processors:** The core calculation manager is completely state-blind and decoupled from specific character controllers. It can be composed natively into any game entity—including enemies, procedural containers, breakable objects, merchants, and world chests—allowing a single database configuration asset to be safely shared and re-used across an endless amount of active entities.
-- **Low API Friction:** Introducing loot drops into any entity takes only a few lines of code, and transferring a rolled payload into a target inventory requires a single line of code. The processor drops results natively into a pre-allocated container, allowing the main framework to instantly absorb, validate, and clear the data packet with a zero runtime garbage memory footprint, seamlessly handling drops from dead enemies, randomly spawned chests, and world stashes out of the box.
 
 
 ---
 
-## Platformer Sub-Library
+## Table of Contents
 
-The Platformer Sub-Library provides a **practical entry point and reference implementation** for the Core Framework.
-
-It demonstrates how the framework's core infrastructure can be assembled into a complete, structured platformer controller without requiring the deeper abstraction layers used by some of the framework's more generalized systems.
-
-The implementation is intentionally more concrete and `MonoBehaviour`-friendly, making it easier to follow, understand, and extend while still demonstrating the framework's core architectural principles.
-
-It also includes practical examples of framework systems such as input and keybind management, demonstrating how common functionality can be integrated with minimal code.
-
-**The Platformer Sub-Library is primarily a reference and learning implementation, not a general-purpose platformer foundation.**
-
-**Less abstraction. Same architectural principles.**
+* [Core](#core)
+* [Combat](#combat)
+* [Modular Character](#modular-character)
+* [Items](#items)
+* [Platformer](#platformer)
 
 
-### Key Features
+---
 
-* Deterministic state-driven movement
-* Grounded, Airborne, Glide, Wall Climb, and Ledge Grab states
-* Coyote time and multi-jump support
-* Framework input, saving and loading, and interaction integration
-* Zero-allocation environment sampling
-* Explicit extension points
 
-**Less abstraction. Same architectural principles.**
+## Core
+
+**The foundation behind PixelDot2D.**
+
+Core is the only independent library in PixelDot2D. It has no dependency on the other framework libraries, so it can be used on its own or serve as the foundation for everything built above it.
+
+Instead of providing only a collection of utilities, Core handles many of the repetitive infrastructure problems that appear across almost every 2D project — physics queries, collision detection, movement, input, animation, persistence, pooling, diagnostics, and more.
+
+The architecture stays behind the scenes. You use the systems you need through small, focused APIs and extend them when your game requires something different.
+
+### Extensions & Utilities
+
+A broad collection of reusable C# and Unity extensions designed to remove repetitive code and common implementation work.
+
+Includes utilities for:
+
+* Strings, numbers, percentages, comparisons, and angle operations
+* `Vector2`, `Transform`, and 2D rotation utilities
+* Collections and common data operations
+* Unity-specific helpers
+* Performance-conscious operations for frequently executed code
+
+Common operations are handled once and reused throughout the framework rather than repeatedly implemented in individual gameplay systems.
+
+---
+
+### Collision
+
+A reusable, allocation-conscious 2D collision system used throughout PixelDot2D.
+
+Instead of relying entirely on Unity's trigger callbacks, the system performs controlled physics queries and provides batched collision information through a consistent API.
+
+* Box, Circle, and Capsule collision shapes
+* ScriptableObject-configured collision shapes
+* Runtime shape replacement
+* `Enter`, `Stay`, and `Exit` lifecycle tracking
+* Per-GameObject or per-Collider tracking
+* Layer-based filtering
+* Batched collision results
+* Reusable collision infrastructure for other framework systems
+* Custom collision shapes can be added without modifying the core collision system
+
+The same infrastructure can be used for combat hitboxes, character interactions, sensors, hazards, and other gameplay systems.
+
+---
+
+### Sensors
+
+Reusable environment-query infrastructure for systems that need to understand their surroundings.
+
+Designed for high-frequency 2D physics queries such as:
+
+* Ground detection
+* Wall detection
+* Ceiling detection
+* Environment checks
+* Component and interface detection
+* Cached previous query results
+
+Sensor configurations are reusable ScriptableObjects, allowing the same sensor definitions to be shared across different entities.
+
+---
+
+### Line of Sight
+
+A lightweight 2D line-of-sight system built for frequent gameplay checks.
+
+* Reusable ScriptableObject configurations
+* Environmental obstacle filtering
+* Early-exit obstacle detection
+* Shared configurations across players, enemies, NPCs, or other entities
+* Simple runtime API such as `HasLineOfSight(...)`
+
+The system handles the physics-query work so gameplay code only needs to ask whether a target is visible.
+
+---
+
+### Sprite Animation
+
+A lightweight alternative to using Mecanim for projects that need direct control over 2D sprite animation.
+
+`AnimationPlayer2D` provides:
+
+* ScriptableObject-driven animation configurations
+* Runtime configuration swapping
+* Sequenced animation playback
+* Play, stop, insert, and query operations
+* Update or FixedUpdate execution
+* Direct `SpriteRenderer` integration
+
+Animation data can be configured as reusable assets while runtime playback remains lightweight and code-driven.
+
+---
+
+### 2D Movement
+
+A reusable `Rigidbody2D` movement system designed to handle far more than character movement.
+
+The movement system uses composable movement sequences that can be combined into larger behaviors.
+
+Useful for:
+
+* Characters
+* Enemies
+* Projectiles
+* Moving platforms
+* Hazards
+* Cinematic movement
+* Automated movement patterns
+
+Movement logic remains independent of the identity of the object using it, allowing the same infrastructure to be reused across very different gameplay systems.
+
+---
+
+### Input
+
+A high-level input layer built on Unity's Input System.
+
+`KeybindManager` provides a centralized way to evaluate gameplay input without scattering device-specific input checks throughout gameplay code.
+
+* Unified keybind state evaluation
+* Keyboard and Gamepad
+* Explicit input-source registration
+* Extensible input sources
+* Centralized keybind mappings
+* Optional save/load integration for persistent keybind configurations
+
+Gameplay systems can work with framework-level input states instead of needing to know where the input originated.
+
+---
+
+### Save & Load
+
+A complete binary save/load pipeline designed to handle the infrastructure around game persistence.
+
+Register systems through `ISaveableAndLoadable`, and the framework handles the surrounding serialization machinery.
+
+* Automatic registration and serialization ordering
+* Background disk I/O to minimize frame-time disruption
+* Safe main-thread hooks for interacting with Unity objects
+* Defensive save directories and rolling backups
+* Protection against overlapping save/load operations
+* Version-aware serialization
+* Support for hierarchical systems and nested saveable components
+* Binary streaming designed for efficient game-state persistence
+
+The save manager does not need to know what it is saving. A system simply implements the save/load contract and provides its serialization identity; the infrastructure handles the rest.
+
+---
+
+### Object Pooling
+
+A type-safe generic object pooling system for frequently created and recycled objects.
+
+* Generic, reusable pool infrastructure
+* FIFO object retrieval
+* Explicit activation control
+* Automatic pool hierarchy management
+* Repooling and bulk disabling
+* Temporal rest handling to help prevent recycled objects from carrying unresolved state into their next use
+
+Useful anywhere a project repeatedly creates and destroys runtime objects such as projectiles, effects, enemies, or gameplay entities.
+
+---
+
+### Diagnostics & Performance
+
+Lightweight tools for measuring and understanding runtime behavior without introducing large profiling systems into gameplay code.
+
+Includes utilities for:
+
+* Measuring execution time
+* Comparing repeated operations
+* Debugging performance-sensitive code
+* Inspecting runtime behavior during development
+
+These tools are intended to make performance investigation practical while keeping the runtime infrastructure lightweight.
+
+---
+
+### Designed to Be Extended
+
+Core systems are built around small contracts and reusable components rather than one fixed gameplay implementation.
+
+You can:
+
+* Use the included systems directly
+* Replace individual configurations
+* Extend existing behavior
+* Create custom collision shapes
+* Add custom input sources
+* Build new movement behaviors
+* Create new sensor configurations
+* Compose Core systems into entirely new gameplay systems
+
+Higher-level PixelDot2D libraries build on this same foundation, but Core remains independent and usable by itself.
+
+**Core handles the infrastructure. You build the game.**
+
+
+---
+
+
+## Combat
+
+**Build complex combat from reusable pieces instead of writing every weapon from scratch.**
+
+Combat is a modular, configuration-driven combat system built around two simple contracts: `IWeaponizable` for things that can deal damage and `IDamageable` for things that can receive it.
+
+Everything between those contracts is replaceable.
+
+Weapons, aiming behavior, execution rules, projectiles, hitboxes, movement, animation timing, and damage processing can be composed into different combat behaviors without creating a new monolithic weapon system for every attack.
+
+### Modular Weapons
+
+The weapon system separates an attack into independent building blocks that can be mixed and matched.
+
+A weapon can independently define:
+
+* **Virtual Transform** — where the attack originates and how it is oriented
+* **Aiming** — recoil, spread, offsets, patterns, and other trajectory adjustments
+* **Execution Gate** — cooldowns, ammunition, heat, reloads, or any other condition that controls when an attack can fire
+* **Execution** — what actually happens when the attack is released
+
+Because these pieces are independent, the same weapon infrastructure can produce very different behaviors without changing the underlying system.
+
+The framework includes execution types for:
+
+* **Projectile**
+* **Hitscan**
+* **Hitbox / Cast-based attacks**
+
+This makes the execution layer reusable rather than tying the weapon system to one specific type of combat.
+
+---
+
+### Build Weapons in the Inspector
+
+Weapons are assembled through reusable ScriptableObject Blueprints rather than hard-coded into individual weapon classes.
+
+A weapon Blueprint combines the four major parts of a weapon:
+
+```text
+Weapon Blueprint
+│
+├── Virtual Transform
+├── Aiming
+├── Execution Gate
+└── Execution
+```
+
+Configure the pieces, save the Blueprint, and reuse it wherever that weapon behavior is needed.
+
+This allows a single weapon framework to cover behaviors such as:
+
+* Melee attacks
+* Guns
+* Spread weapons
+* Recoil-based weapons
+* Lasers
+* Projectiles
+* Area attacks
+* Repeating attacks
+* Charged or gated attacks
+* Custom weapon behaviors
+
+The goal is not to give you one predefined combat system.
+
+It is to give you reusable pieces that can be assembled into your own.
+
+---
+
+### Stack Weapons Into One System
+
+Combat also provides a higher-level `WeaponManager` for situations where a character needs multiple weapons operating together.
+
+Instead of managing every `WeaponizedModule` individually, you can provide the manager with multiple weapon Blueprints and let it orchestrate them as a single weapon system.
+
+```text
+Weapon Manager
+│
+├── Weapon Blueprint A
+├── Weapon Blueprint B
+├── Weapon Blueprint C
+└── Weapon Blueprint D
+```
+
+There is no fixed concept of how many weapons a single managed loadout must contain.
+
+A character can use one weapon, combine several weapons into one attack configuration, or build large layered weapon systems from many Blueprints.
+
+For example:
+
+```text
+Character Attack
+│
+├── Main Projectile
+├── Secondary Projectile
+├── Hitscan Effect
+├── Area Hitbox
+└── Additional Weapon
+```
+
+The manager handles the macro-level orchestration, allowing the individual weapons to remain focused on their own behavior.
+
+This makes complex loadouts much easier to configure without forcing gameplay code to manually coordinate every weapon instance.
+
+**Build the weapons individually. Combine them into whatever weapon system the game needs.**
+
+---
+
+### Animation-Synchronized Combat
+
+Combat can build directly on Core's `RB2DMovementManager` and `AnimationPlayer2D`, allowing movement, animation, and weapon execution to operate as one configurable sequence.
+
+Weapon execution can be tied to specific animation frames.
+
+For example:
+
+```text
+Frame 0 → Begin attack
+Frame 3 → Enable hitbox
+Frame 5 → Execute damage
+Frame 8 → Disable attack
+```
+
+The same system can also operate without animation timing. Leave the animation player unassigned and the weapon can execute normally.
+
+This makes the system useful for everything from simple attacks to tightly synchronized attack animations.
+
+---
+
+### Combat Movement
+
+`RB2DMovement_CombatManager` extends the Core movement infrastructure with weapon and animation awareness.
+
+A single movement sequence can define:
+
+* Movement behavior
+* Weapon loadout
+* Animation playback
+* Weapon execution timing
+* Weapon transitions
+* Targeting
+* Phase changes
+
+Different movement phases can use different weapons, or no weapon at all.
+
+For example:
+
+```text
+Phase 1 → Move + Weapon A
+Phase 2 → Follow Target + Weapon B
+Phase 3 → Wait
+Phase 4 → Move + No Weapon
+```
+
+Weapon changes can occur automatically as the movement sequence transitions between phases.
+
+The underlying movement system remains reusable, so the same infrastructure can drive enemies, players, projectiles, hazards, or other combat entities.
+
+---
+
+### Projectiles
+
+Projectiles are not treated as disposable one-off weapon implementations.
+
+The projectile system combines collision, movement, pooling, state-driven behavior, and weapon execution into a reusable projectile foundation.
+
+A projectile can:
+
+* Follow configurable movement sequences
+* Use Core's `RB2DMovementManager`
+* Be pooled and reused
+* Detect and respond to collisions
+* Execute weaponized behavior
+* Change behavior through states
+* Use configurable formations and trajectories
+* Be extended with custom movement, collision, or visual behavior
+
+A single projectile implementation can therefore represent many different projectile types.
+
+**One projectile system. Many possible behaviors.**
+
+---
+
+### Damage Pipeline
+
+Damage is passed between combat systems through a small interface-driven contract rather than requiring weapons and targets to know about each other's implementations.
+
+`IWeaponizable` provides a centralized point where outgoing damage can be inspected or modified before it reaches the target.
+
+This makes systems such as:
+
+* Damage modifiers
+* Elemental interactions
+* Status effects
+* Armor or resistance logic
+* Damage-type conversions
+* Lifesteal or on-hit behavior
+
+possible without rewriting the weapon execution itself.
+
+The result is a combat pipeline where the attack can remain generic while the entity using it can influence the final result.
+
+---
+
+### Reusable Hit Detection
+
+Combat builds on Core's collision infrastructure rather than introducing a separate collision implementation for every attack type.
+
+Hitbox and cast-based executions can therefore use the same underlying collision capabilities while remaining interchangeable at the weapon level.
+
+This allows the same combat framework to handle different attack shapes and delivery methods without creating separate combat architectures for each one.
+
+---
+
+### Performance-Conscious Execution
+
+Combat systems are designed to avoid doing work until it is actually needed.
+
+Weapon spatial calculations, aiming calculations, and execution processing use lazy evaluation so inactive weapon systems do not continuously perform unnecessary spatial work.
+
+Weapon management also prewarms its runtime weapon capacity where possible, reducing runtime allocation pressure during combat while still allowing loadouts to grow when necessary.
+
+Editor-only trajectory visualization is separated from runtime execution, keeping development-time visualization from becoming part of the production execution path.
+
+---
+
+### Designed for Composition
+
+Combat is intentionally built from small, replaceable modules.
+
+You can combine:
+
+**Virtual Transform + Aiming + Gate + Hitscan**
+
+or
+
+**Virtual Transform + Aiming + Gate + Projectile**
+
+or
+
+**Virtual Transform + Aiming + Hitbox**
+
+Then those weapons can be:
+
+* Used individually
+* Combined into larger weapon loadouts
+* Synchronized with animation frames
+* Placed into combat movement sequences
+* Extended with custom modules
+
+The architecture handles the composition.
+
+**You configure the behavior.**
+
+---
+
+### What This Gives You
+
+Instead of creating a new weapon class every time your game needs something different, Combat gives you a reusable set of systems for assembling attacks from existing pieces.
+
+A single weapon can be simple.
+
+A weapon can also be composed from multiple independent systems.
+
+And multiple weapons can be combined into a larger managed loadout that behaves as one coordinated combat system.
+
+The same infrastructure can support a player, enemy, NPC, boss, projectile, hazard, or any other entity that implements the required combat contracts.
+
+You build the weapon pieces once, combine them into larger behaviors, and reuse them wherever the game needs them.
+
+**Build the pieces once. Combine them into the combat your game needs.**
+
+
+---
+
+
+## Modular Character
+
+**Build characters by configuring behavior, not by building another giant controller.**
+
+Modular Character is a data-driven character framework built around reusable states, configurable movement, state gates, passives, and scripted behavior.
+
+The important part is what you **don't** have to build.
+
+You create a **Modular Character Blueprint**, configure the character's attributes and available behaviors, and the framework handles the runtime orchestration behind it.
+
+The controller manages state creation, recycling, transitions, lifecycle routing, passive processing, and movement integration so your character logic can stay focused on what the character actually does.
+
+And despite the name, **"character" does not mean player**. The same system can drive players, NPCs, enemies, AI-controlled entities, scripted actors, or anything else that needs state-driven behavior.
+
+---
+
+### Build a Character from a Blueprint
+
+A character starts with a `ModularCharacterBluePrint` ScriptableObject.
+
+The Blueprint acts as the character's reusable configuration:
+
+```text
+Modular Character Blueprint
+│
+├── Character Attributes
+│   ├── Stats
+│   ├── Passives
+│   ├── Immunities
+│   └── World Orientation
+│
+└── Available States
+    ├── Idle
+    ├── Move
+    ├── Jump
+    ├── Dash
+    └── Custom States
+```
+
+You configure the character in the Inspector rather than manually wiring its runtime architecture.
+
+The Blueprint can define:
+
+* Character stats
+* Starting passives
+* Passive immunities
+* Buff and debuff immunities
+* World-space orientation
+* Available behavioral states
+* The character's default state configuration
+
+The framework validates and cleans the configuration for you, including duplicate and null entries where applicable.
+
+Once the Blueprint is configured, the `ModularCharacterController` turns that data into the runtime systems the character needs.
+
+**You configure the character. The framework builds the runtime structure.**
+
+---
+
+### State-Driven Characters
+
+The character controller provides the lifecycle and orchestration while individual states contain the behavior.
+
+A state can represent anything from:
+
+* Idle
+* Grounded
+* Jumping
+* Falling
+* Dashing
+* Attacking
+* Climbing
+* Stunned
+* Knocked back
+* Custom gameplay states
+
+States are created from reusable ScriptableObject configurations and converted into lightweight runtime instances automatically.
+
+The controller does not need to know what each state does. It provides the lifecycle, routes execution, and lets each state implement its own behavior.
+
+Adding a new state therefore does not mean modifying a giant central character controller.
+
+---
+
+### Build States Without Rebuilding the Framework
+
+Creating a new state follows the same three-layer structure used throughout PixelDot2D:
+
+```text
+ScriptableObject
+      ↓
+Data
+      ↓
+Runtime State
+```
+
+The ScriptableObject defines the configuration exposed in the Inspector.
+
+The data layer stores the configuration used by the runtime.
+
+The runtime state contains the actual behavior.
+
+The framework handles runtime creation, recycling, lifecycle management, and integration with the controller automatically.
+
+To add a new behavior, you create the state and add its configuration to the Blueprint.
+
+No central state registry needs to be rewritten.
+
+No giant controller needs another `if` statement.
+
+No separate runtime allocation system needs to be built for the new state.
+
+**You add the behavior. The framework handles the architecture around it.**
+
+---
+
+### States Use the Systems They Need
+
+A state does not need to reinvent the systems it depends on.
+
+For example, a Dash state does **not** implement its own movement system or collision detection.
+
+It simply composes the systems already provided by Core:
+
+```text
+Dash State
+    │
+    ├── Movement ───→ Core Movement
+    │
+    ├── Collision ─→ Core Sensors
+    │
+    └── Conditions ─→ State Gates
+```
+
+The state focuses on the behavior:
+
+> "Move this way for this long, under these conditions."
+
+Core handles the physics and environment queries underneath it.
+
+This same composition approach can be used to build entirely different behaviors without implementing a new movement or collision system for every state.
+
+**Complex behavior can come from combining simple systems rather than rewriting them.**
+
+---
+
+### Configurable Movement
+
+Modular Character includes a dedicated movement layer built on Core's `RB2DMovementManager`.
+
+Movement is assembled from configurable sequences rather than being tied to one specific genre or controller implementation.
+
+The same infrastructure can be used for:
+
+* Platformer movement
+* Top-down movement
+* Dashes
+* Flying
+* Climbing
+* Knockback
+* Enemy movement
+* Patrols
+* Scripted movement
+* Custom movement patterns
+
+Because the movement layer does not depend on Combat, it can be used independently.
+
+When Combat is added, its combat-aware movement layer can replace the character movement layer while preserving the same underlying movement architecture.
+
+**One movement foundation. Many kinds of characters.**
+
+---
+
+### State Gates
+
+States can use reusable **State Gates** to determine whether a behavior is currently allowed.
+
+A gate can handle conditions such as:
+
+* Cooldowns
+* State combinations
+* Resource availability
+* Damage reactions
+* Timing conditions
+* Custom transition rules
+
+These gates can go beyond simple timers.
+
+For example, cooldown behavior can react to the character's current states and movement sequences, allowing mechanics such as controlled recovery pauses or rewards for performing specific sequences.
+
+The result is that advanced movement and resource mechanics can be configured as reusable conditions instead of being hard-coded into individual character states.
+
+---
+
+### Modular Passives
+
+Passives use the same composition philosophy as the rest of the framework.
+
+Instead of creating a unique passive implementation for every effect, passives are assembled from three independent pieces:
+
+```text
+Gate → Execution → Exit
+```
+
+**Gate** determines **when** the passive activates.
+
+**Execution** determines **what** the passive does.
+
+**Exit** determines **when** the passive ends.
+
+The same pieces can therefore be reused across different character mechanics.
+
+For example:
+
+```text
+On Damage Taken
+      ↓
+Modify Stat
+      ↓
+Exit After Timer
+```
+
+Or:
+
+```text
+While In State
+      ↓
+Modify Movement
+      ↓
+Exit When State Changes
+```
+
+Passives can be configured as permanent traits or temporary effects, allowing the same system to cover character abilities, status effects, starting bonuses, equipment-driven behavior, and other gameplay mechanics.
+
+The passive system is intentionally compositional.
+
+**You combine the pieces. The framework handles the passive lifecycle.**
+
+---
+
+### Scripted Characters & AI Behavior
+
+Not every character is controlled directly by the player.
+
+Modular Character also provides a **Scripted State** for characters whose behavior comes from configuration rather than player input.
+
+A scripted state can be composed from:
+
+```text
+Scripted State
+│
+├── Main Action
+├── Sub-Actions
+└── Exit Conditions
+```
+
+This can be used for:
+
+* NPC behavior
+* Enemy behavior
+* AI movement
+* Patrols
+* Automated movement
+* Environmental characters
+* Scripted sequences
+* Other non-player behavior
+
+The same movement and sensing systems used by player-controlled characters can drive autonomous behavior.
+
+For example, a scripted character can move through the environment, use Core sensors to detect its surroundings, and transition into another state or Blueprint when a configured condition is met.
+
+The character controller does not need to understand what the behavior means.
+
+It simply executes the configured behavior.
+
+---
+
+### Reusable Behavior, Not Giant Controllers
+
+The traditional character controller tends to grow until one class is responsible for everything:
+
+```text
+Input
+Movement
+Jumping
+Attacking
+Cooldowns
+Damage
+Passives
+AI
+Animation
+Collision
+Special Abilities
+...
+```
+
+Modular Character separates those responsibilities into reusable systems.
+
+A state can use Core movement.
+
+A state gate can control when it is allowed to execute.
+
+A passive can use its own Gate, Execution, and Exit.
+
+A scripted state can combine movement, environment checks, and transition conditions.
+
+Combat can provide weapon behavior when the Combat library is present.
+
+Each system does its own job while the controller orchestrates them.
+
+This keeps individual behaviors replaceable and prevents the character controller from becoming the place where every gameplay rule eventually ends up.
+
+---
+
+### Debuggable Runtime States
+
+The runtime states and passives are lightweight C# objects rather than Unity components, but that does not mean they disappear into a black box during development.
+
+Modular Character provides Editor-only runtime snapshots of the currently active states and passives.
+
+These snapshots are diagnostic views of the runtime system. They let you see what is currently active while keeping the actual runtime architecture lightweight.
+
+The visualization is intentionally separate from the runtime state itself, so inspecting the snapshot does not become another source of gameplay behavior.
+
+**Advanced runtime architecture, without sacrificing visibility while debugging.**
+
+---
+
+### Built for Extension
+
+The Modular Character architecture is designed so new behavior can be added without modifying the controller itself.
+
+You can:
+
+* Create new states
+* Create new state gates
+* Create new passive gates
+* Create new passive executions
+* Create new passive exits
+* Create custom scripted actions
+* Create custom scripted exit conditions
+* Replace movement configurations
+* Compose existing systems into new mechanics
+* Create entirely new character behaviors
+
+Runtime creation and recycling are handled by the framework's Factory/Flyweight architecture, while the controller remains focused on orchestration.
+
+You do not need to rebuild the character framework every time your game needs a new mechanic.
+
+**Build the character you need, without rebuilding the character controller.**
+
+
 
 
 ---
