@@ -132,19 +132,23 @@ Built as an optional, high-performance extension package for entities requiring 
 
 ## Platformer Sub-Library
 
-The Platformer sub-library delivers a highly optimized, streamlined movement controller engineered to demonstrate the seamless, practical integration of the core framework's primary infrastructure—including Asynchronous Serialization, Cross-Device Input wrappers, and the Interaction suite. This module acts as an approachable, lightweight entry point into the broader ecosystem architecture, providing a production-ready baseline that strictly enforces the framework’s high-performance architectural rules without the steep learning curve of fully virtualized or abstract systems.
+The Platformer Sub-Library provides a **practical entry point and reference implementation** for the Core Framework.
 
-To preserve strict codebase purity, systems involving highly subjective or design-dependent trade-offs—such as moving platform algorithms or combat mechanics—have been intentionally omitted. This delivers a pristine, unbloated "white-box" architecture, providing developers with a rock-solid, predictable foundation that is instantly ready for custom mechanical extensions.
+It demonstrates how the framework's core infrastructure can be assembled into a complete, structured platformer controller without requiring the deeper abstraction layers used by some of the framework's more generalized systems.
 
-### Platformer Key Technical Features:
+The implementation is intentionally more concrete and `MonoBehaviour`-friendly, making it easier to follow, understand, and extend while still demonstrating the framework's core architectural principles.
 
-- **Deterministic States:** Out-of-the-box support for precise, frame-perfect genre mechanics, including Grounded, Airborne (with integrated Coyote Time and multi-jump support), Gliding, Wall Climbs, and Ledge Grabs.
-- **Frictionless Onboarding Architecture:** Designed with a lean, visible implementation footprint that avoids dense abstraction layers, making it highly readable and exceptionally easy to debug or modify.
-- **Native Engine Harmony:** Striking an ideal balance for rapid prototyping, this sub-library interfaces directly with standard Unity physics components while still benefiting from the framework's decoupled data structures.
-- **Plug-and-Play Systems Validation:** Serves as a live, functional blueprint displaying exactly how to map runtime data to the save/load pipeline and pass mechanical inputs through the central wrapper.
-- **Zero-Allocation Environment Sampling:** Utilizes the Core Physics Module's native casting arrays to evaluate structural boundaries (floors, walls, ledges) with absolute zero runtime garbage collection overhead.
-  
-- **Encapsulated Extension Hooks:** Features clean, explicit virtual method hooks, allowing you to easily inject custom gameplay behaviors or specialized physics calculations without breaking the core movement loop.
+### Key Features
+
+* Deterministic state-driven movement
+* Grounded, Airborne, Glide, Wall Climb, and Ledge Grab states
+* Coyote time and multi-jump support
+* Framework input, serialization, and interaction integration
+* Zero-allocation environment sampling
+* Explicit extension points
+
+**Less abstraction. Same architectural principles.**
+
 
 ---
 *Copyright 2026 - Present © PixelDot2D - All Rights Reserved | Contact: PixelDot2D@gmail.com*
