@@ -138,6 +138,11 @@ It demonstrates how the framework's core infrastructure can be assembled into a 
 
 The implementation is intentionally more concrete and `MonoBehaviour`-friendly, making it easier to follow, understand, and extend while still demonstrating the framework's core architectural principles.
 
+It also includes practical examples of framework systems such as input and keybind management, demonstrating how common functionality can be integrated with minimal code.
+
+**Less abstraction. Same architectural principles.**
+
+
 ### Key Features
 
 * Deterministic state-driven movement
